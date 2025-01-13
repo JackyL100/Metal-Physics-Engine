@@ -39,9 +39,14 @@ Renderer::~Renderer()
     _pShaderLibrary->release();
     _pDepthStencilState->release();
     _pCubeVertexDataBuffer->release();
+    _pSphereVertexDataBuffer->release();
     for (int i = 0; i < kMaxFramesInFlight; i++)
     {
         _pCubeInstanceDataBuffer[i]->release();
+    }
+    for (int i = 0; i < kMaxFramesInFlight; i++)
+    {
+        _pSphereInstanceDataBuffer[i]->release();
     }
     for (int i = 0; i < kMaxFramesInFlight; i++)
     {
@@ -49,6 +54,7 @@ Renderer::~Renderer()
     }
     _pCubeIndexBuffer->release();
     _pCubePSO->release();
+    _pSpherePSO->release();
     _pCommandQueue->release();
     _pDevice->release();
 }

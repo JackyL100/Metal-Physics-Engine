@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D27B5C582D2593060006AFD3 /* Metal.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D27B5C562D2593060006AFD3 /* Metal.framework */; };
+		D27B5C592D2593060006AFD3 /* MetalKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D27B5C572D2593060006AFD3 /* MetalKit.framework */; };
+		D27B5C5B2D2593100006AFD3 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D27B5C5A2D2593100006AFD3 /* AppKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXCopyFilesBuildPhase section */
 		D27B5C492D2592AA0006AFD3 /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -20,6 +26,9 @@
 
 /* Begin PBXFileReference section */
 		D27B5C4B2D2592AA0006AFD3 /* METALSolarSystem */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = METALSolarSystem; sourceTree = BUILT_PRODUCTS_DIR; };
+		D27B5C562D2593060006AFD3 /* Metal.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Metal.framework; path = System/Library/Frameworks/Metal.framework; sourceTree = SDKROOT; };
+		D27B5C572D2593060006AFD3 /* MetalKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MetalKit.framework; path = System/Library/Frameworks/MetalKit.framework; sourceTree = SDKROOT; };
+		D27B5C5A2D2593100006AFD3 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +44,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D27B5C5B2D2593100006AFD3 /* AppKit.framework in Frameworks */,
+				D27B5C582D2593060006AFD3 /* Metal.framework in Frameworks */,
+				D27B5C592D2593060006AFD3 /* MetalKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -45,6 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				D27B5C4D2D2592AA0006AFD3 /* METALSolarSystem */,
+				D27B5C552D2593060006AFD3 /* Frameworks */,
 				D27B5C4C2D2592AA0006AFD3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -55,6 +68,16 @@
 				D27B5C4B2D2592AA0006AFD3 /* METALSolarSystem */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D27B5C552D2593060006AFD3 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D27B5C5A2D2593100006AFD3 /* AppKit.framework */,
+				D27B5C562D2593060006AFD3 /* Metal.framework */,
+				D27B5C572D2593060006AFD3 /* MetalKit.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -245,6 +268,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_DEBUG_DYLIB = YES;
+				HEADER_SEARCH_PATHS = (
+					"metal-cpp-extensions",
+					"metal-cpp",
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -253,6 +285,15 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				ENABLE_DEBUG_DYLIB = YES;
+				HEADER_SEARCH_PATHS = (
+					"metal-cpp-extensions",
+					"metal-cpp",
+				);
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/../Frameworks",
+					"$(inherited)",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

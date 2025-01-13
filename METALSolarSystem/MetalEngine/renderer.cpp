@@ -18,12 +18,12 @@ _frame(0)
     _pCommandQueue = _pDevice->newCommandQueue();
     for (int i = 0; i < 2; i++)
     {
-        cubes.push_back(std::make_unique<Cube>(0.2f, (simd::float3){1.0f * i, 1.0f * i, 0}));
+        cubes.push_back(std::make_unique<Cube>(0.2f, (simd::float3){1.0f * (i - 0.5f), 1.0f * i, 0}));
     }
     
-    for (int i = 1; i < 3; i++)
+    for (int i = 0; i < 3; i++)
     {
-        spheres.push_back(std::make_unique<Sphere>(0.2f, (simd::float3){-0.3f * (i + 1), -0.3f * (i + 1), -i + 0.4f}));
+        spheres.push_back(std::make_unique<Sphere>(0.2f, (simd::float3){-0.3f * (i + 2.0f), 1.0f, -0.5f * (i - 1.0f) }));
     }
     buildShaders();
     buildDepthStencilShaders();
@@ -235,6 +235,10 @@ void Renderer::draw( MTK::View* pView )
 //
 //        ix += 1;
         pCubeInstanceData[i] = cubes[i]->getWorldToScreenTransform(_cameraPosition);
+        
+    }
+    for (int i = 0; i < spheres.size(); i++)
+    {
         pSphereInstanceData[i] = spheres[i]->getWorldToScreenTransform(_cameraPosition);
     }
     pCubeInstanceDataBuffer->didModifyRange( NS::Range::Make( 0, pCubeInstanceDataBuffer->length() ) );

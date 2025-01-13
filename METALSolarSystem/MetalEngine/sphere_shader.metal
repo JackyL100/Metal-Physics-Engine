@@ -42,7 +42,8 @@ spherePix vertex sphereVertexMain( device const shader_types::SphereVertexData* 
     spherePix o;
     const device shader_types::SphereVertexData& vd = vertexData[vertexId];
     float4 pos = float4(vd.position, 1.0);
-    o.local_space = float3(pos[0], pos[1], sqrt(1 - pow(pos[0], 2) - pow(pos[1], 2)));
+//    o.local_space = float3(pos[0], pos[1], sqrt(1 - pow(pos[0], 2) - pow(pos[1], 2)));
+    o.local_space = float3(pos[0], pos[1], pos[2]);
     pos = instanceData[ instanceId ].instanceTransform * pos;
     pos = cameraData.perspectiveTransform * cameraData.worldTransform * pos;
     o.position = pos;

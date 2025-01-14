@@ -37,7 +37,7 @@ struct v2f
 //};
 
 v2f vertex cubeVertexMain( device const shader_types::CubeVertexData* vertexData [[buffer(0)]],
-                          device const shader_types::InstanceData* instanceData [[buffer(1)]],
+                          device const shader_types::CubeInstanceData* instanceData [[buffer(1)]],
                           device const shader_types::CameraData& cameraData [[buffer(2)]],
                         uint vertexId [[vertex_id]],
                         uint instanceId [[instance_id]])

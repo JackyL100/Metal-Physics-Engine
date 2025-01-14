@@ -21,18 +21,34 @@ namespace shader_types
     {
         simd::float3 position;
     };
-    struct InstanceData
+    struct CubeInstanceData
     {
         simd::float4x4 instanceTransform;
         simd::float3x3 instanceNormalTransform;
         simd::float4 instanceColor;
     };
 
+    struct SphereInstanceData
+    {
+        simd::float3 color;
+        simd::float3 center;
+        float radius;
+
+        float ambience;
+        float diffuse;
+        float specular;
+        float shininess;
+        
+        simd::float4x4 instanceTransform;
+    };
     struct CameraData
     {
         simd::float4x4 perspectiveTransform;
         simd::float4x4 worldTransform;
         simd::float3x3 worldNormalTransform;
+        simd::float3 position;
+        simd::float3 direction;
+        float zoom;
     };
 };
 

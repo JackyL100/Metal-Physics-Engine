@@ -12,18 +12,18 @@ const int Renderer::kMaxFramesInFlight = 3;
 Renderer::Renderer( MTL::Device* pDevice )
 : _pDevice( pDevice->retain() ),
 _angle (0.f),
-_cameraPosition{ 0.f, 0.f, -5.f },
+_cameraPosition{ 0.f, 1.f, -5.f },
 _frame(0)
 {
     _pCommandQueue = _pDevice->newCommandQueue();
-    for (int i = 0; i < 2; i++)
+    for (int i = 0; i < 4; i++)
     {
-        cubes.push_back(std::make_unique<Cube>(0.2f, (simd::float3){1.0f * (i - 0.5f), 1.0f * i, 0}));
+        cubes.push_back(std::make_unique<Cube>(0.2f, (simd::float3){1.0f * (i - 0.5f), -1.0f * i, 0}));
     }
     
     for (int i = 0; i < 3; i++)
     {
-        spheres.push_back(std::make_unique<Sphere>(0.2f, (simd::float3){-0.3f * (i + 2.0f), 1.0f, -0.5f * (i - 1.0f) }));
+        spheres.push_back(std::make_unique<Sphere>(0.3f, (simd::float3){-0.3f * (i + 3.0f), 1.0f, -1.f }, (simd::float3){0.9, 0.2, 0.3}));
     }
     buildShaders();
     buildDepthStencilShaders();
@@ -139,7 +139,7 @@ void Renderer::buildBuffers()
     _pCubeVertexDataBuffer->didModifyRange(NS::Range::Make(0, _pCubeVertexDataBuffer->length()));
     _pCubeIndexBuffer->didModifyRange(NS::Range::Make(0, _pCubeIndexBuffer->length()));
     
-    const size_t cubeInstanceDataSize = kMaxFramesInFlight * cubes.size() * sizeof(shader_types::InstanceData);
+    const size_t cubeInstanceDataSize = kMaxFramesInFlight * cubes.size() * sizeof(shader_types::CubeInstanceData);
     
     for (size_t i = 0; i < kMaxFramesInFlight; i++)
     {
@@ -153,7 +153,7 @@ void Renderer::buildBuffers()
     memcpy(_pSphereVertexDataBuffer->contents(), Sphere::vertices, sphereVertexSize);
     _pSphereVertexDataBuffer->didModifyRange(NS::Range::Make(0, _pSphereVertexDataBuffer->length()));
     
-    const size_t sphereInstanceDataSize = kMaxFramesInFlight * spheres.size() * sizeof(shader_types::InstanceData);
+    const size_t sphereInstanceDataSize = kMaxFramesInFlight * spheres.size() * sizeof(shader_types::SphereInstanceData);
     
     for (size_t i = 0; i < kMaxFramesInFlight; i++)
     {
@@ -186,60 +186,34 @@ void Renderer::draw( MTK::View* pView )
         dispatch_semaphore_signal( pRenderer->_semaphore );
     });
 
-//    _angle += 0.002f;
+    _angle += 0.002f;
 
 //    const float scl = 0.2f;
-    shader_types::InstanceData* pCubeInstanceData = reinterpret_cast< shader_types::InstanceData *>( pCubeInstanceDataBuffer->contents() );
-    shader_types::InstanceData* pSphereInstanceData = reinterpret_cast< shader_types::InstanceData* >(pSphereInstanceDataBuffer->contents());
+    shader_types::CubeInstanceData* pCubeInstanceData = reinterpret_cast< shader_types::CubeInstanceData *>( pCubeInstanceDataBuffer->contents() );
+    shader_types::SphereInstanceData* pSphereInstanceData = reinterpret_cast< shader_types::SphereInstanceData* >(pSphereInstanceDataBuffer->contents());
 
-//    float4x4 rt = math::makeTranslate( _cameraPosition );
-//    float4x4 rr1 = math::makeYRotate( -_angle );
-//    float4x4 rr0 = math::makeXRotate( _angle * 0.5);
-//    float4x4 rtInv = math::makeTranslate( { -_cameraPosition.x, -_cameraPosition.y, -_cameraPosition.z } );
-//    float4x4 fullObjectRot = rt * rr1 * rr0* rtInv;
+    // Camera transformations
+    float4x4 rt = math::makeTranslate( _cameraPosition );
+    float4x4 rr1 = math::makeYRotate( -_angle );
+    float4x4 rr0 = math::makeXRotate( _angle * 0.5);
+    float4x4 rtInv = math::makeTranslate( { -_cameraPosition.x, -_cameraPosition.y, -_cameraPosition.z } );
+    float4x4 fullObjectRot = rt * rr1 * rr0  * rtInv;
 //
 //    size_t ix = 0;
 //    size_t iy = 0;
 //    size_t iz = 0;
+    std::vector<float4x4> faceCameraTransforms;
+    faceCameraTransforms.push_back(math::makeXRotate(_angle * -0.5));
+    faceCameraTransforms.push_back(math::makeYRotate(_angle));
     for ( size_t i = 0; i < cubes.size(); ++i )
     {
-//        if ( ix == kInstanceRows )
-//        {
-//            ix = 0;
-//            iy += 1;
-//        }
-//        if ( iy == kInstanceRows )
-//        {
-//            iy = 0;
-//            iz += 1;
-//        }
-//
-//        float4x4 scale = math::makeScale( (float3){ scl, scl, scl } );
-//        float4x4 zrot = math::makeZRotate( _angle * sinf((float)ix) );
-//        float4x4 yrot = math::makeYRotate( _angle * cosf((float)iy));
-//
-//        float x = ((float)ix - (float)kInstanceRows/2.f) * (2.f * scl) + scl;
-//        float y = ((float)iy - (float)kInstanceColumns/2.f) * (2.f * scl) + scl;
-//        float z = ((float)iz - (float)kInstanceDepth/2.f) * (2.f * scl);
-//        float4x4 translate = math::makeTranslate( math::add( _cameraPosition, { x, y, z } ) );
-//
-////     pInstanceData[ i ].instanceTransform = fullObjectRot * translate * yrot * zrot * scale;
-//        pInstanceData[ i ].instanceTransform = translate * yrot * zrot * scale;
-//        pInstanceData[ i ].instanceNormalTransform = math::discardTranslation( pInstanceData[ i ].instanceTransform );
-//
-//        float iDivNumInstances = i / (float)kNumInstances;
-//        float r = iDivNumInstances;
-//        float g = 1.0f - r;
-//        float b = sinf( M_PI * 2.0f * iDivNumInstances );
-//        pInstanceData[ i ].instanceColor = (float4){ r, g, b, 1.0f };
-//
-//        ix += 1;
         pCubeInstanceData[i] = cubes[i]->getWorldToScreenTransform(_cameraPosition);
-        
+        pCubeInstanceData[i].instanceTransform = fullObjectRot * pCubeInstanceData[i].instanceTransform;
     }
     for (int i = 0; i < spheres.size(); i++)
     {
-        pSphereInstanceData[i] = spheres[i]->getWorldToScreenTransform(_cameraPosition);
+        pSphereInstanceData[i] = spheres[i]->getSphereStruct(_cameraPosition, faceCameraTransforms);
+        pSphereInstanceData[i].instanceTransform = fullObjectRot * pSphereInstanceData[i].instanceTransform;
     }
     pCubeInstanceDataBuffer->didModifyRange( NS::Range::Make( 0, pCubeInstanceDataBuffer->length() ) );
     pSphereInstanceDataBuffer->didModifyRange(NS::Range::Make(0, pSphereInstanceDataBuffer->length()));
@@ -250,6 +224,9 @@ void Renderer::draw( MTK::View* pView )
     pCameraData->perspectiveTransform = math::makePerspective( 45.f * M_PI / 180.f, 1.f, 0.03f, 500.0f ) ;
     pCameraData->worldTransform = math::makeIdentity();
     pCameraData->worldNormalTransform = math::discardTranslation( pCameraData->worldTransform );
+    pCameraData->position = _cameraPosition;
+    pCameraData->direction = (float3){0.0,0.0,-1.0};
+    pCameraData->zoom = 1.0;
     pCameraDataBuffer->didModifyRange( NS::Range::Make( 0, sizeof( shader_types::CameraData ) ) );
 
     // Begin render pass:

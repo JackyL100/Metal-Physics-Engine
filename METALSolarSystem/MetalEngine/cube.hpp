@@ -8,11 +8,11 @@
 #ifndef CUBE_H
 #define CUBE_H
 
-#include "shape.hpp"
+#include "shader_types.hpp"
 #include "matrix_math.hpp"
 #include <vector>
 
-class Cube : public Shape
+class Cube
 {
 public:
     
@@ -60,8 +60,11 @@ public:
        20, 21, 22, 22, 23, 20, /* bottom */
     };
     
+    float size;
+    simd::float3 center;
+    
     Cube(float size_, simd::float3 center_);
-    virtual shader_types::InstanceData getWorldToScreenTransform(simd::float3 cameraPosition);
+    shader_types::CubeInstanceData getWorldToScreenTransform(simd::float3 cameraPosition);
 };
 
 #endif
